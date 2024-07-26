@@ -60,11 +60,13 @@ const VideoAndSidebar = ({ mode }: { mode: Mode }) => {
       let tags: string[];
       if (matchedGame === "") {
         tags = [
-          `[Result "*"]`,
-          `[FEN "${START_FEN}"]`,
-          `[Board "${boardNumber}"]`,
-          `[Site "${boardNumber}"]`,
-          `[Annotator "ChessCam"]`
+          `[White "White"]`,
+          `[Black "Black"]`,
+          `[Result "*"]`
+          // `[FEN "${START_FEN}"]`,
+          // `[Board "${boardNumber}"]`,
+          // `[Site "${boardNumber}"]`,
+          // `[Annotator "ChessCam"]`
         ]
       } else {
         const matches = matchedGame.match(/\[(.*?)\]/g);
