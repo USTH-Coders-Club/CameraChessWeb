@@ -36,6 +36,8 @@ const VideoAndSidebar = ({ mode }: { mode: Mode }) => {
   const [playing, setPlaying] = useState<boolean>(false);
   const [study, setStudy] = useState<Study | null>(null);
   const [boardNumber, setBoardNumber] = useState<number>(-1)
+  const [playerWhite, setPlayerWhite] = useState<string>("White");
+  const [playerBlack, setPlayerBlack] = useState<string>("Black");
   const [digital, setDigital] = useState<boolean>(false);
   
   const videoRef = useRef<any>(null);
@@ -43,7 +45,10 @@ const VideoAndSidebar = ({ mode }: { mode: Mode }) => {
   const canvasRef = useRef<any>(null);
   const sidebarRef = useRef<any>(null);
   const cornersRef = useRef<CornersDict>(corners);
-
+  useEffect(() => {
+    console.log(playerBlack)  
+  }
+  , [playerBlack])
   useEffect(() => {
     if (mode !== "broadcast" || (study === null) || (boardNumber === -1)) {
       return;
@@ -90,6 +95,8 @@ const VideoAndSidebar = ({ mode }: { mode: Mode }) => {
         })
       }
       const broadcastPgn = [
+        `[White "${playerWhite}"]`,
+        `[Black "${playerBlack}"]`,
         ...tags,
         "",
         moves
@@ -124,6 +131,10 @@ const VideoAndSidebar = ({ mode }: { mode: Mode }) => {
     "setDigital": setDigital,
     "setBoardNumber": setBoardNumber,
     "setStudy": setStudy,
+    "playerWhite": "White",
+    "playerBlack": "Black",
+    "setPlayerWhite": setPlayerWhite,
+    "setPlayerBlack": setPlayerBlack,
     "piecesModelRef": context.piecesModelRef,
     "xcornersModelRef": context.xcornersModelRef,
     "videoRef": videoRef,
