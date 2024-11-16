@@ -8,6 +8,26 @@ import { zeros } from "./math";
 import { CORNER_KEYS } from "./constants";
 import { Chess } from "chess.js";
 
+// Type definitions
+type PieceIndices = {
+  [key: string]: number;
+};
+
+type PieceSymbols = {
+  [key: number]: string;
+};
+
+// Constants
+const PIECE_INDICES: PieceIndices = {
+  'wp': 0, 'wn': 1, 'wb': 2, 'wr': 3, 'wq': 4, 'wk': 5,
+  'bp': 6, 'bn': 7, 'bb': 8, 'br': 9, 'bq': 10, 'bk': 11
+};
+
+const PIECE_SYMBOLS: PieceSymbols = {
+  0: 'P', 1: 'N', 2: 'B', 3: 'R', 4: 'Q', 5: 'K',
+  6: 'p', 7: 'n', 8: 'b', 9: 'r', 10: 'q', 11: 'k'
+};
+
 const calculateScore = (state: any, move: MovesData, from_thr=0.6, to_thr=0.6) => {
   let score = 0;
   move.from.forEach(square => {
@@ -191,6 +211,11 @@ movesPairsRef: any, lastMoveRef: any, moveTextRef: any, mode: Mode) => {
       const squares: number[] = getSquares(boxes, centers, boundary);
       const update: number[][] = getUpdate(scores, cls, squares);
       state = updateState(state, update);
+
+      // Add FEN logging here
+      const currentPosition: string = stateToFen(state);
+      console.log('Current detected position:', currentPosition);
+
       const {bestScore1, bestScore2, bestJointScore, bestMove, bestMoves} = processState(state, movesPairsRef.current, possibleMoves);
 
       const endTime: number = performance.now();
@@ -252,3 +277,55 @@ movesPairsRef: any, lastMoveRef: any, moveTextRef: any, mode: Mode) => {
     }
   };
 };
+
+const stateToFen = (state: number[][]): string => {
+  let fen: string = '';
+  let emptyCount: number = 0;
+
+  // Threshold for considering a piece present
+  const CONFIDENCE_THRESHOLD: number = 0.5;
+
+  for (let rank: number = 0; rank < 8; rank++) {
+    if (rank > 0) fen += '/';
+    
+    for (let file: number = 0; file < 8; file++) {
+      const squareIndex: number = rank * 8 + file;
+      const squareState: number[] = state[squareIndex];
+      
+      // Find the piece with highest probability above threshold
+      let maxProb: number = 0;
+      let maxPieceIndex: number = -1;
+      
+      for (let piece: number = 0; piece < 12; piece++) {
+        if (squareState[piece] > maxProb) {
+          maxProb = squareState[piece];
+          maxPieceIndex = piece;
+        }
+      }
+
+      if (maxProb < CONFIDENCE_THRESHOLD) {
+        // Empty square
+        emptyCount++;
+      } else {
+        // Add number for empty squares before this piece
+        if (emptyCount > 0) {
+          fen += emptyCount.toString();
+          emptyCount = 0;
+        }
+        // Add piece symbol
+        fen += PIECE_SYMBOLS[maxPieceIndex];
+      }
+    }
+    
+    // Add remaining empty count at end of rank
+    if (emptyCount > 0) {
+      fen += emptyCount.toString();
+      emptyCount = 0;
+    }
+  }
+
+  // Add standard FEN suffixes for initial position
+  fen += ' w KQkq - 0 1';
+  
+  return fen;
+}
