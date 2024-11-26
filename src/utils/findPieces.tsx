@@ -24,8 +24,8 @@ const PIECE_INDICES: PieceIndices = {
 };
 
 const PIECE_SYMBOLS: PieceSymbols = {
-  0: 'P', 1: 'N', 2: 'B', 3: 'R', 4: 'Q', 5: 'K',
-  6: 'p', 7: 'n', 8: 'b', 9: 'r', 10: 'q', 11: 'k'
+  0: 'b', 1: 'k', 2: 'n', 3: 'p', 4: 'q', 5: 'r',
+  6: 'B', 7: 'K', 8: 'N', 9: 'P', 10: 'Q', 11: 'R'
 };
 
 const calculateScore = (state: any, move: MovesData, from_thr=0.6, to_thr=0.6) => {
@@ -285,8 +285,8 @@ const stateToFen = (state: number[][]): string => {
   // Threshold for considering a piece present
   const CONFIDENCE_THRESHOLD: number = 0.5;
 
-  for (let rank: number = 0; rank < 8; rank++) {
-    if (rank > 0) fen += '/';
+  for (let rank: number = 7; rank >= 0; rank--) {
+    if (rank < 7) fen += '/';
     
     for (let file: number = 0; file < 8; file++) {
       const squareIndex: number = rank * 8 + file;
