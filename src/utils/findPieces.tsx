@@ -7,6 +7,7 @@ import {  Mode, MovesData, MovesPair } from "../types";
 import { zeros } from "./math";
 import { CORNER_KEYS } from "./constants";
 import { Chess } from "chess.js";
+import io from "socket.io-client";
 
 // Type definitions
 type PieceIndices = {
@@ -27,6 +28,8 @@ const PIECE_SYMBOLS: PieceSymbols = {
   0: 'b', 1: 'k', 2: 'n', 3: 'p', 4: 'q', 5: 'r',
   6: 'B', 7: 'K', 8: 'N', 9: 'P', 10: 'Q', 11: 'R'
 };
+
+const socket = io('https://fentoboard.usthcodersclub.com');
 
 const calculateScore = (state: any, move: MovesData, from_thr=0.6, to_thr=0.6) => {
   let score = 0;
@@ -215,11 +218,11 @@ movesPairsRef: any, lastMoveRef: any, moveTextRef: any, mode: Mode, id?: string 
 
       const currentPosition: string = stateToFen(state);
       const currentTime = performance.now();
-      if (currentTime - lastLogTime >= 3000) {
-        console.log(JSON.stringify({
+      if (currentTime - lastLogTime >= 2000) {
+        socket.emit('receive_data', {
           id: id || null,
           fen: currentPosition
-        }));
+        });
         lastLogTime = currentTime;
       }
 
