@@ -182,7 +182,7 @@ export const getKeypoints = (cornersRef: any, canvasRef: any): number[][] => {
 
 export const findPieces = (modelRef: any, videoRef: any, canvasRef: any,
 playingRef: any, setText: any, dispatch: any, cornersRef: any, boardRef: any, 
-movesPairsRef: any, lastMoveRef: any, moveTextRef: any, mode: Mode) => {
+movesPairsRef: any, lastMoveRef: any, moveTextRef: any, mode: Mode, id?: string | null) => {
   let centers: number[][] | null = null;
   let boundary: number[][];
   let state: number[][];
@@ -190,6 +190,7 @@ movesPairsRef: any, lastMoveRef: any, moveTextRef: any, mode: Mode) => {
   let possibleMoves: Set<string>;
   let requestId: number;
   let greedyMoveToTime: { [move: string] : number};
+  let lastLogTime: number = 0;
 
   const loop = async () => {
     if (playingRef.current === false || invalidVideo(videoRef)) {
@@ -212,9 +213,15 @@ movesPairsRef: any, lastMoveRef: any, moveTextRef: any, mode: Mode) => {
       const update: number[][] = getUpdate(scores, cls, squares);
       state = updateState(state, update);
 
-      // Add FEN logging here
       const currentPosition: string = stateToFen(state);
-      console.log('Current detected position:', currentPosition);
+      const currentTime = performance.now();
+      if (currentTime - lastLogTime >= 3000) {
+        console.log(JSON.stringify({
+          id: id || null,
+          fen: currentPosition
+        }));
+        lastLogTime = currentTime;
+      }
 
       const {bestScore1, bestScore2, bestJointScore, bestMove, bestMoves} = processState(state, movesPairsRef.current, possibleMoves);
 
@@ -324,8 +331,6 @@ const stateToFen = (state: number[][]): string => {
     }
   }
 
-  // Add standard FEN suffixes for initial position
-  fen += ' w KQkq - 0 1';
   
   return fen;
 }

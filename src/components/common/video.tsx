@@ -13,11 +13,11 @@ import { getMovesPairs } from "../../utils/moves";
 import { Chess } from "chess.js";
 
 const Video = ({ piecesModelRef, canvasRef, videoRef, sidebarRef, playing, 
-  setPlaying, playingRef, setText, digital, mode, cornersRef }: {
+  setPlaying, playingRef, setText, digital, mode, cornersRef, id }: {
   piecesModelRef: any, canvasRef: any, videoRef: any, sidebarRef: any, 
   playing: boolean, setPlaying: SetBoolean, playingRef: any,
   setText: SetStringArray, digital: boolean, mode: Mode,
-  cornersRef: any
+  cornersRef: any, id?: string
 }) => {
   const game: Game = gameSelect();
 
@@ -123,7 +123,7 @@ const Video = ({ piecesModelRef, canvasRef, videoRef, sidebarRef, playing,
     }
 
     findPieces(piecesModelRef, videoRef, canvasRef, playingRef, setText, dispatch, 
-      cornersRef, boardRef, movesPairsRef, lastMoveRef, moveTextRef, mode);
+      cornersRef, boardRef, movesPairsRef, lastMoveRef, moveTextRef, mode, id);
 
     const stopWebcam = async () => {
       const stream = await streamPromise;

@@ -1,6 +1,6 @@
 import { useRef, useState, useEffect } from "react";
 import Video from "../common/video";
-import { useOutletContext } from "react-router-dom";
+import { useOutletContext, useLocation } from "react-router-dom";
 import { useDispatch } from 'react-redux';
 import { cornersReset, cornersSelect } from '../../slices/cornersSlice';
 import { Container } from "../common";
@@ -25,6 +25,10 @@ const PortraitWarning = () => {
 }
 
 const VideoAndSidebar = ({ mode }: { mode: Mode }) => {
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const id = queryParams.get('id');
+  
   const context = useOutletContext<ModelRefs>();
   const dispatch = useDispatch();
   const corners: CornersDict = cornersSelect();
@@ -131,7 +135,8 @@ const VideoAndSidebar = ({ mode }: { mode: Mode }) => {
     "sidebarRef": sidebarRef,
     "cornersRef": cornersRef,
     "playingRef": playingRef,
-    "mode": mode
+    "mode": mode,
+    "id": id
   }
   const Sidebar = () => {
     switch(mode) {
